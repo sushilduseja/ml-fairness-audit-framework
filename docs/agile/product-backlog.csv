@@ -1,0 +1,30 @@
+id,title,priority,story_points,status,sprint,owner,dependencies
+BACKLOG-101,Implement demographic parity metric,P0,5,Ready,Sprint 1,Data Science,
+BACKLOG-102,Implement equalized odds metric,P0,5,Ready,Sprint 1,Data Science,BACKLOG-101
+BACKLOG-103,Implement calibration metric,P0,5,Ready,Sprint 1,Data Science,BACKLOG-101
+BACKLOG-104,Implement predictive equality metric,P0,3,Ready,Sprint 1,Data Science,BACKLOG-101
+BACKLOG-105,Build statistical testing framework,P0,8,Ready,Sprint 1,Data Science,"BACKLOG-101,BACKLOG-102,BACKLOG-103,BACKLOG-104"
+BACKLOG-201,Build test submission API,P0,5,Ready,Sprint 2,Backend,BACKLOG-105
+BACKLOG-202,Build test results retrieval API,P0,5,Ready,Sprint 2,Backend,"BACKLOG-201,BACKLOG-105"
+BACKLOG-203,Build explainability/explain API,P0,5,Ready,Sprint 2,Backend,"BACKLOG-105,BACKLOG-202"
+BACKLOG-204,Generate PDF reports,P0,8,Ready,Sprint 2,Backend,"BACKLOG-202,BACKLOG-203"
+BACKLOG-205,Build job queue and async processing,P0,8,Ready,Sprint 2,DevOps,"BACKLOG-201,BACKLOG-204"
+BACKLOG-206,Implement data validation and attribute detection,P0,5,Ready,Sprint 2,Data Science,BACKLOG-105
+BACKLOG-301,Build web dashboard,P0,8,Ready,Sprint 3,Frontend,"BACKLOG-202,BACKLOG-204"
+BACKLOG-302,Create comprehensive user guide,P1,5,Ready,Sprint 3,Product,
+BACKLOG-303,Prepare sample datasets,P1,3,Ready,Sprint 3,Data Science,"BACKLOG-105,BACKLOG-206"
+BACKLOG-304,Build metric selection wizard,P1,5,Ready,Sprint 3,Frontend,"BACKLOG-301,BACKLOG-302"
+BACKLOG-305,Create regulatory compliance mapping,P1,5,Ready,Sprint 3,Product,BACKLOG-302
+BACKLOG-306,Create fairness metrics educational guide,P1,5,Ready,Sprint 3,Product,BACKLOG-302
+BACKLOG-401,Expand metric library (8+ metrics),P1,13,Backlog,Sprint 4,Data Science,BACKLOG-105
+BACKLOG-402,Build analytics dashboard,P1,8,Backlog,Sprint 4,Frontend,"BACKLOG-301,BACKLOG-202"
+BACKLOG-403,Build remediation recommendation engine,P1,8,Backlog,Sprint 4,Backend,BACKLOG-202
+BACKLOG-404,Implement model version comparison,P1,5,Backlog,Sprint 4,Backend,BACKLOG-202
+BACKLOG-501,Build real-time monitoring,P2,13,Backlog,Phase 3,DevOps,"BACKLOG-205,BACKLOG-402"
+BACKLOG-502,Build custom metric builder,P2,8,Backlog,Phase 3,Backend,"BACKLOG-401,BACKLOG-105"
+BACKLOG-601,Implement webhook callbacks,P0,3,Ready,Sprint 2,Backend,BACKLOG-205
+BACKLOG-602,Build authentication/authorization,P0,5,Ready,Sprint 2,Backend,BACKLOG-201
+BACKLOG-603,Implement rate limiting and quota management,P0,3,Ready,Sprint 2,Backend,BACKLOG-201
+BACKLOG-604,Setup monitoring and logging,P0,5,Ready,Sprint 2,DevOps,BACKLOG-205
+BACKLOG-605,Security audit and hardening,P0,8,Ready,Sprint 3,Security,
+BACKLOG-606,Load testing and performance optimization,P0,8,Ready,Sprint 3,DevOps,"BACKLOG-301,BACKLOG-204,BACKLOG-205"

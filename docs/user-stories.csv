@@ -1,0 +1,85 @@
+story_id,persona,user_story,acceptance_criteria,epic,priority
+US-101,Data Scientist,Implement demographic parity metric,"AC1: Calculate approval rate disparity between groups
+AC2: Return point estimate + 95% CI via bootstrap
+AC3: Include p-value from permutation test
+AC4: Handle binary and multiclass protected attributes
+AC5: Validate against Fairlearn implementation",Metrics Engine,P0
+US-102,Data Scientist,Implement equalized odds metric,"AC1: Calculate FPR and TPR disparity between groups
+AC2: Handle missing ground truth (skip metric gracefully)
+AC3: Bootstrap 10K iterations for CI
+AC4: Validate against AIF360 implementation
+AC5: Document when/when-not to use",Metrics Engine,P0
+US-103,Data Scientist,Implement calibration metric,"AC1: Group predictions into probability buckets
+AC2: Compare actual outcome rate across groups
+AC3: Return max bucket disparity + per-bucket results
+AC4: Validate against academic papers
+AC5: Handle edge case (no samples in bucket)",Metrics Engine,P0
+US-104,Data Scientist,Implement predictive equality metric,"AC1: Calculate FPR disparity only (not TPR)
+AC2: Same CI/significance testing as other metrics
+AC3: Document use case (high false positive cost)
+AC4: Unit tests with ground truth validation",Metrics Engine,P0
+US-105,Data Scientist,Build statistical testing framework,"AC1: Bootstrap confidence interval computation
+AC2: Permutation test for significance testing
+AC3: Effect size calculations (Cohen's d, odds ratios)
+AC4: Unit test coverage >90%
+AC5: Validation against scipy/numpy implementations",Metrics Engine,P0
+US-201,ML Engineer,Build test submission REST API,"AC1: POST /api/v1/fairness/test accepts test config
+AC2: Validate required fields (model ID, data paths, attributes)
+AC3: Async processing - return test_id immediately (202 Accepted)
+AC4: Return estimated completion time
+AC5: Clear error messages with remediation",API,P0
+US-202,ML Engineer,Build test results retrieval API,"AC1: GET /api/v1/fairness/test/{test_id} returns results
+AC2: Include all metrics (values, CIs, p-values, interpretation)
+AC3: Include remediation recommendations
+AC4: Return report URL
+AC5: Handle missing/invalid test_id (404 with guidance)",API,P0
+US-203,Compliance Officer,Build explainability API,"AC1: POST /api/v1/fairness/explain translates metrics to plain language
+AC2: Context-aware prompting (data_scientist vs. compliance_officer)
+AC3: Ground output in computed metrics (no hallucination)
+AC4: Return explanation + key_takeaways + next_steps
+AC5: Include business implications",API,P0
+US-204,Compliance Officer,Generate PDF reports,"AC1: EU AI Act Article 9 compliant template
+AC2: Include model description, metrics, limitations, recommendations
+AC3: Professional formatting (logos, color, tables)
+AC4: PDF generation <30 seconds for 100K samples
+AC5: Support custom audience (engineer vs. examiner)",Reporting,P0
+US-205,DevOps,Build job queue and async processing,"AC1: Celery/RabbitMQ task queue integration
+AC2: Support 10+ concurrent tests without degradation
+AC3: Webhook callback on test completion
+AC4: Retry logic (exponential backoff) for failures
+AC5: Job status tracking (queued/processing/completed)",Infrastructure,P0
+US-206,Data Scientist,Implement data validation and attribute detection,"AC1: Validate CSV/Parquet schema compliance
+AC2: Auto-detect protected attributes in features (suggest names)
+AC3: Warn on missing values, category imbalance
+AC4: Clear error messages with remediation examples
+AC5: Sample size warnings per subgroup",Data Pipeline,P0
+US-301,ML Engineer,Build web dashboard,"AC1: Test submission form (drag-drop file upload)
+AC2: Status dashboard (view all running/completed tests)
+AC3: Results viewer (metric values, confidence intervals)
+AC4: PDF report download
+AC5: Test history (past results, trend visualization)",UI,P1
+US-302,Compliance Officer,Create comprehensive user guide,"AC1: Quick start tutorial (first test in 10 min)
+AC2: Persona-specific guides (ML engineer, risk manager, compliance officer)
+AC3: API reference with Python/cURL examples
+AC4: FAQ (>10 questions answered)
+AC5: Troubleshooting guide",Documentation,P1
+US-303,Product Manager,Prepare sample datasets,"AC1: Create 3-4 demo datasets (credit, fraud, insurance scenarios)
+AC2: Include realistic bias patterns (known disparities)
+AC3: Include ground truth labels
+AC4: Document each dataset (size, bias explanation)
+AC5: Host for download (GitHub, S3)",Enablement,P1
+US-304,ML Engineer,Build metric selection wizard,"AC1: Interactive questionnaire (use case, constraints)
+AC2: Recommend appropriate metrics based on answers
+AC3: Explain metric tradeoffs (incompatible metrics warning)
+AC4: Link to full metric guide
+AC5: Save preferences for next test",UI,P1
+US-305,Compliance Officer,Create regulatory compliance mapping,"AC1: EU AI Act Article 9 requirement mapping
+AC2: ECOA disparate impact testing guidance
+AC3: FCA fairness principles alignment
+AC4: Singapore MAS FEAT framework coverage
+AC5: Examples for each framework",Documentation,P1
+US-306,Compliance Officer,Create fairness metrics educational guide,"AC1: Plain-language explanations for 4 core metrics
+AC2: When/when-not to use each metric (use case guidance)
+AC3: Academic references and citations
+AC4: Case studies (credit scoring, fraud detection examples)
+AC5: Decision tree for metric selection",Documentation,P1
