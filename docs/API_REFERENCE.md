@@ -1,10 +1,6 @@
 # API Reference
 
-## Overview
-
-RESTful API for bias testing integration. Async processing with webhook callbacks. All endpoints require authentication via API key.
-
----
+*This is a design specification demonstrating API structure.*
 
 ## Authentication
 
@@ -12,36 +8,34 @@ RESTful API for bias testing integration. Async processing with webhook callback
 Header: Authorization: Bearer YOUR_API_KEY
 ```
 
-All requests must include authentication header. API keys created in dashboard.
+## Core Endpoints
 
----
+### POST /api/v1/fairness/test
 
-## POST /api/v1/fairness/test
+Submit fairness testing job.
 
-Submit a fairness testing job.
-
-**Request:**
+**Request Schema:**
 ```json
 {
-  "model_id": "credit_scoring_v2",
-  "model_name": "Credit Risk Assessment",
-  "use_case": "credit_approval",
-  "predictions_path": "s3://bucket/predictions.parquet",
-  "features_path": "s3://bucket/features.parquet",
-  "ground_truth_column": "actual_default",
-  "prediction_column": "predicted_probability",
+  "model_id": "string",
+  "model_name": "string",
+  "use_case": "credit_approval|fraud_detection|underwriting",
+  "predictions_path": "string (S3/GCS/Azure URI)",
+  "features_path": "string",
+  "ground_truth_column": "string",
+  "prediction_column": "string",
   "protected_attributes": [
     {
-      "name": "gender",
-      "type": "binary",
-      "privileged_group": "male",
-      "unprivileged_group": "female"
+      "name": "string",
+      "type": "binary|categorical",
+      "privileged_group": "string",
+      "unprivileged_group": "string"
     }
   ],
-  "fairness_metrics": ["demographic_parity", "equalized_odds"],
+  "fairness_metrics": ["demographic_parity", "equalized_odds", "calibration"],
   "report_config": {
-    "format": "pdf",
-    "audience": "regulatory_examiner"
+    "format": "pdf|json|html",
+    "audience": "data_scientist|compliance_officer|examiner"
   }
 }
 ```
@@ -49,211 +43,103 @@ Submit a fairness testing job.
 **Response (202 Accepted):**
 ```json
 {
-  "test_id": "TEST_20250114_ABC123",
+  "test_id": "string",
   "status": "processing",
-  "created_at": "2025-01-14T10:30:00Z",
-  "estimated_completion": "2025-01-14T10:35:00Z"
+  "created_at": "ISO 8601 timestamp",
+  "estimated_completion": "ISO 8601 timestamp"
 }
 ```
 
-**Errors:**
-- `400 Bad Request`: Missing required fields
-- `401 Unauthorized`: Invalid API key
-- `422 Unprocessable Entity`: Protected attribute not found
+### GET /api/v1/fairness/test/{test_id}
 
----
-
-## GET /api/v1/fairness/test/{test_id}
-
-Retrieve test results and recommendations.
+Retrieve test results.
 
 **Response (200 OK):**
 ```json
 {
-  "test_id": "TEST_20250114_ABC123",
-  "status": "completed",
-  "overall_assessment": "CONDITIONAL_PASS",
+  "test_id": "string",
+  "status": "completed|processing|failed",
+  "overall_assessment": "PASS|CONDITIONAL_PASS|FAIL",
   "dataset_summary": {
-    "total_samples": 50000,
-    "protected_attribute_distributions": {
-      "gender": {"male": 0.55, "female": 0.45}
-    }
+    "total_samples": "integer",
+    "protected_attribute_distributions": {}
   },
   "fairness_results": [
     {
-      "metric": "demographic_parity_difference",
-      "value": 0.08,
-      "threshold": 0.10,
-      "status": "PASS",
-      "confidence_interval": [0.06, 0.10],
-      "p_value": 0.042,
-      "interpretation": "Small but statistically significant disparity"
+      "metric": "string",
+      "value": "float",
+      "threshold": "float",
+      "status": "PASS|FAIL",
+      "confidence_interval": ["float", "float"],
+      "p_value": "float",
+      "interpretation": "string"
     }
   ],
   "recommendations": [
     {
-      "priority": "high",
-      "metric": "equalized_odds_difference",
-      "issue": "False positive disparity",
-      "mitigation_strategy": "threshold_optimization",
-      "implementation_effort": "low"
+      "priority": "high|medium|low",
+      "issue": "string",
+      "mitigation_strategy": "string",
+      "implementation_effort": "low|medium|high"
     }
   ],
-  "report_url": "https://reports.example.com/TEST_20250114_ABC123.pdf"
+  "report_url": "string"
 }
 ```
 
-**Status Values:** `processing`, `completed`, `failed`, `cancelled`
+### POST /api/v1/fairness/explain
 
----
-
-## POST /api/v1/fairness/explain
-
-Generate business-language explanation of metric results.
+Generate stakeholder-appropriate explanation.
 
 **Request:**
 ```json
 {
-  "metric": "equalized_odds_difference",
-  "result": {"value": 0.15, "threshold": 0.10, "status": "FAIL"},
-  "audience": "compliance_officer",
-  "use_case": "credit_approval"
+  "metric": "string",
+  "result": {"value": "float", "status": "string"},
+  "audience": "compliance_officer|business_stakeholder|data_scientist",
+  "use_case": "string"
 }
 ```
 
-**Response (200 OK):**
+**Response:**
 ```json
 {
-  "explanation": "The model incorrectly denies credit to women 15% more often than men with similar default risk. This is statistically significant and violates fair lending principles.",
-  "key_takeaways": [
-    "Women with same creditworthiness are denied more often",
-    "Disparity is statistically significant (p < 0.001)",
-    "Impacts thousands of customers annually"
-  ],
-  "business_implications": [
-    "Legal risk: potential ECOA violation",
-    "Regulatory examination likely",
-    "Reputational risk if public"
-  ],
-  "next_steps": [
-    "Root cause analysis",
-    "Threshold optimization by gender",
-    "Validation on holdout set",
-    "Document remediation"
-  ]
+  "explanation": "string",
+  "key_takeaways": ["string"],
+  "business_implications": ["string"],
+  "next_steps": ["string"]
 }
 ```
 
----
+### GET /api/v1/fairness/metrics
 
-## GET /api/v1/fairness/metrics
+List available metrics with metadata.
 
-List available fairness metrics.
-
-**Response (200 OK):**
+**Response:**
 ```json
 {
   "metrics": [
     {
-      "name": "demographic_parity_difference",
-      "category": "group_fairness",
-      "description": "Difference in positive prediction rates between groups",
-      "formula": "|P(Ŷ=1|A=0) - P(Ŷ=1|A=1)|",
-      "use_cases": [
-        "Legal requirement under ECOA",
-        "Equal opportunity goal",
-        "Loan origination, hiring"
-      ],
-      "limitations": [
-        "Ignores ground truth differences",
-        "Incompatible with equalized odds if base rates differ"
-      ],
-      "references": ["Calmon et al. (2017)"]
+      "name": "string",
+      "category": "group_fairness|individual_fairness",
+      "description": "string",
+      "use_cases": ["string"],
+      "limitations": ["string"],
+      "references": ["string"]
     }
   ]
 }
 ```
 
----
-
-## Webhook Callback
-
-When job completes, POST to your specified webhook URL:
-
-```json
-{
-  "test_id": "TEST_20250114_ABC123",
-  "status": "completed",
-  "timestamp": "2025-01-14T10:35:00Z",
-  "overall_assessment": "CONDITIONAL_PASS",
-  "report_url": "https://reports.example.com/TEST_20250114_ABC123.pdf"
-}
-```
-
----
-
 ## Error Handling
 
-All errors return standard format:
-
+**Standard Error Format:**
 ```json
 {
   "error": {
-    "code": "INVALID_ATTRIBUTE",
-    "message": "Protected attribute 'ethnicity' not found in features",
-    "available_attributes": ["gender", "age", "income"],
-    "remediation": "Verify attribute names match feature columns"
+    "code": "string",
+    "message": "string",
+    "remediation": "string"
   }
 }
 ```
-
----
-
-## Code Examples
-
-**Python:**
-```python
-import requests
-
-headers = {"Authorization": "Bearer sk_test_abc123"}
-response = requests.post(
-    "https://api.fairnessaudit.com/api/v1/fairness/test",
-    headers=headers,
-    json={
-        "model_id": "credit_v2",
-        "predictions_path": "s3://bucket/pred.parquet",
-        "features_path": "s3://bucket/feat.parquet",
-        "protected_attributes": [{"name": "gender", "type": "binary"}],
-        "fairness_metrics": ["demographic_parity", "equalized_odds"]
-    }
-)
-test_id = response.json()["test_id"]
-```
-
-**cURL:**
-```bash
-curl -X POST https://api.fairnessaudit.com/api/v1/fairness/test \
-  -H "Authorization: Bearer sk_test_abc123" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model_id": "credit_v2",
-    "predictions_path": "s3://bucket/pred.parquet",
-    "protected_attributes": [{"name": "gender", "type": "binary"}]
-  }'
-```
-
----
-
-## Rate Limiting
-
-- 100 requests/minute per API key
-- Max 10 concurrent tests per account
-- Dataset size limit: 10M samples
-- Response: `429 Too Many Requests` with retry-after header
-
----
-
-## Versioning
-
-Current version: v1  
-Deprecation policy: 12-month notice before removal
