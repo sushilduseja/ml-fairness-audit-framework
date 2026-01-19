@@ -1,4 +1,4 @@
-# ML Fairness Audit Framework
+# ML Fairness Audit Framework [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sushilduseja/ml-fairness-audit-framework)
 ## Automated Bias Testing for Financial Services ML Models
 
 This repository demonstrates product management capabilities for building responsible AI tooling in capital markets.
